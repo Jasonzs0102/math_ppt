@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沪教版八年级数学代数方程</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "SimSun", "STSong", "Apple LiSung Light", serif;
+        }
+        
+        body {
+            background-color: #f0f0f0;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-size: 16px; /* 基础字体大小 */
+            line-height: 1.5; /* 基础行间距 */
+        }
+        
+        .slide-container {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            overflow: hidden;
+            background-color: #f5f5f5;
+        }
+        
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .slide-header {
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .slide-header h1 {
+            font-size: 2.2em;
+        }
+        
+        .slide-content {
+            flex: 1;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: auto;
+        }
+        
+        .slide-footer {
+            text-align: center;
+            padding: 10px;
+            color: #7f8c8d;
+        }
+        
+        .nav-controls {
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            background-color: #2980b9;
+        }
+        
+        .nav-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            margin: 0 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .nav-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .nav-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .draggable {
+            cursor: move;
+            position: absolute;
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+        
+        .box {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        
+        .blue-box {
+            background-color: #ebf5fb;
+            border: 2px solid #3498db;
+        }
+        
+        .red-box {
+            background-color: #f9ebea;
+            border: 2px solid #e74c3c;
+        }
+        
+        .yellow-box {
+            background-color: #fffde7;
+            border: 2px solid #f39c12;
+        }
+        
+        .green-box {
+            background-color: #e8f8f5;
+            border: 2px solid #1abc9c;
+        }
+        
+        .formula {
+            font-family: "Arial", sans-serif;
+            font-style: italic;
+            color: #e74c3c;
+        }
+        
+        .flex-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        
+        .flex-column {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        table, th, td {
+            border: 1px solid #3498db;
+        }
+        
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #ebf5fb;
+            color: #2980b9;
+        }
+        
+        .important {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .note {
+            font-size: 0.9em;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        
+        .center-text {
+            text-align: center;
+        }
+        
+        .coordinate-system {
+            position: relative;
+            height: 200px;
+            width: 200px;
+            margin: 20px auto;
+        }
+        
+        .coordinate-system .x-axis {
+            position: absolute;
+            top: 100px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #2c3e50;
+        }
+        
+        .coordinate-system .y-axis {
+            position: absolute;
+            top: 0;
+            left: 100px;
+            width: 2px;
+            height: 100%;
+            background-color: #2c3e50;
+        }
+        
+        .coordinate-system .point {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #e74c3c;
+            transform: translate(-4px, -4px);
+        }
+        
+        .slide-indicator {
+            text-align: center;
+            padding: 10px;
+            background-color: #34495e;
+            color: white;
+        }
+        
+        .illustration {
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        /* 添加动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .slide.active {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        /* 优化字体大小和行间距 */
+        h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+        
+        h3 {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+        
+        p {
+            margin-bottom: 8px;
+            line-height: 1.6; /* 增加行间距 */
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            body {
+                font-size: 15px;
+            }
+            
+            .slide-header h1 {
+                font-size: 2em;
+            }
+            
+            .flex-row {
+                gap: 15px;
+            }
+            
+            .box {
+                padding: 12px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            body {
+                font-size: 14px;
+            }
+            
+            .slide-header h1 {
+                font-size: 1.8em;
+            }
+            
+            .flex-row {
+                flex-direction: column;
+            }
+            
+            .coordinate-system {
+                height: 180px;
+                width: 180px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                font-size: 13px;
+            }
+            
+            .slide-header h1 {
+                font-size: 1.6em;
+            }
+            
+            .slide {
+                padding: 15px;
+            }
+            
+            .slide-content {
+                padding: 15px;
+            }
+            
+            .box {
+                padding: 10px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            body {
+                font-size: 12px;
+            }
+            
+            .slide-header h1 {
+                font-size: 1.4em;
+            }
+            
+            .slide {
+                padding: 10px;
+            }
+            
+            .slide-content {
+                padding: 10px;
+            }
+            
+            .box {
+                padding: 8px;
+            }
+            
+            .nav-btn {
+                padding: 6px 15px;
+                font-size: 14px;
+            }
+        }
+        
+        /* 自适应高度 */
+        @media (max-height: 800px) {
+            .slide-header {
+                padding: 10px 0;
+                margin-bottom: 15px;
+            }
+            
+            .slide-content {
+                padding: 15px;
+            }
+        }
+        
+        @media (max-height: 600px) {
+            .slide-header {
+                padding: 8px 0;
+                margin-bottom: 10px;
+            }
+            
+            .slide-content {
+                padding: 10px;
+            }
+        }
+        
+        /* 适应不同屏幕比例 */
+        @media (min-aspect-ratio: 16/9) {
+            .slide-container {
+                max-width: calc(100vh * 4/3);
+                margin: 0 auto;
+            }
+        }
+        
+        @media (max-aspect-ratio: 4/3) {
+            .slide-container {
+                max-height: calc(100vw * 3/4);
+                margin: auto 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-indicator">第 <span id="current-slide">1</span> 页 / 共 <span id="total-slides">15</span> 页</div>
+    
+    <div class="slide-container" id="slideContainer">
+        <!-- 第1页：标题页 -->
+        <div class="slide active" id="slide1">
+            <div class="slide-header">
+                <h1>代数方程复习</h1>
+            </div>
+            <div class="slide-content">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                    <h1 style="font-size: 4em; color: #2980b9; margin-bottom: 40px;">代数方程复习</h1>
+                    <h2 style="font-size: 2.2em; color: #3498db; margin-bottom: 20px;">沪教版八年级下册</h2>
+                    <p style="font-size: 1.5em; color: #7f8c8d; margin-top: 60px;">数学复习课</p>
+                </div>
+            </div>
+            <div class="slide-footer">第1页</div>
+        </div>
+
+        <!-- 第2页：代数方程概述 -->
+        <div class="slide" id="slide2">
+            <div class="slide-header">
+                <h1>代数方程概述</h1>
+            </div>
+            <div class="slide-content">
+                <h2 class="center-text" style="color: #2980b9; margin-bottom: 25px;">本章主要学习四类方程</h2>
+                
+                <div class="box blue-box">
+                    <h3 style="color: #2980b9;">一、整式方程</h3>
+                    <p style="color: #e74c3c; font-style: italic; margin-left: 20px;">x³ - 8 = 0</p>
+                </div>
+                
+                <div class="box blue-box">
+                    <h3 style="color: #2980b9;">二、分式方程</h3>
+                    <p style="color: #e74c3c; font-style: italic; margin-left: 20px;">3/(x-2) = 2/x</p>
+                </div>
+                
+                <div class="box blue-box">
+                    <h3 style="color: #2980b9;">三、无理方程</h3>
+                    <p style="color: #e74c3c; font-style: italic; margin-left: 20px;">√(2x+3) = x</p>
+                </div>
+                
+                <div class="box blue-box">
+                    <h3 style="color: #2980b9;">四、二元二次方程组</h3>
+                    <p style="color: #e74c3c; font-style: italic; margin-left: 20px;">{x + y = 5<br>x² + y² = 13</p>
+                </div>
+                
+                <div class="center-text" style="margin-top: 25px;">
+                    <p><strong>解题关键：</strong>理解每类方程的特点和解法，注意验根避免增根</p>
+                </div>
+            </div>
+            <div class="slide-footer">第2页</div>
+        </div>
+
+        <!-- 第3页：整式方程知识点 -->
+        <div class="slide" id="slide3">
+            <div class="slide-header">
+                <h1>一、整式方程</h1>
+            </div>
+            <div class="slide-content">
+                <h2 style="color: #2980b9; margin-bottom: 18px;">知识点</h2>
+                
+                <div class="box blue-box">
+                    <h3><strong>定义：</strong></h3>
+                    <p>整式方程：方程两边都是整式（只含有未知数的加、减、乘、幂运算）的代数式。</p>
+                </div>
+                
+                <div class="box blue-box">
+                    <h3><strong>类型：</strong></h3>
+                    <p>1. 一元整式方程：如一次方程 ax + b = 0 ，二次方程 ax² + bx + c = 0</p>
+                    <p>2. 高次方程：如 x³ - 8 = 0，x⁴ - 5x² + 4 = 0（高次方程需要特殊解法）</p>
+                </div>
+                
+                <div class="box blue-box">
+                    <h3><strong>解法：</strong></h3>
+                    <p>1. 移项、合并同类项，化为标准形式 ax<sup>n</sup> + bx<sup>n-1</sup> + ... + k = 0</p>
+                    <p>2. 因式分解法：如 x<sup>3</sup> - 8 = 0 可分解为 (x - 2)(x² + 2x + 4) = 0</p>
+                    <p>3. 换元法：如 x⁴ - 5x² + 4 = 0 令 y = x²，则方程化为 y² - 5y + 4 = 0</p>
+                    <p>4. 公式法：解二次方程可使用公式 x = [-b ± √(b² - 4ac)] / (2a)</p>
+                </div>
+            </div>
+            <div class="slide-footer">第3页</div>
+        </div>
+
+        <!-- 第4页：整式方程例题1 -->
+        <div class="slide" id="slide4">
+            <div class="slide-header">
+                <h1>整式方程例题（基础）</h1>
+            </div>
+            <div class="slide-content">
+                <h2 style="color: #2980b9; margin-bottom: 18px;">例题：解方程 x³ - 8 = 0</h2>
+                
+                <div style="display: flex; margin-top: 15px;">
+                    <div style="flex: 3;">
+                        <h3><strong>解：</strong></h3>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤1：</strong>将方程变形为 x³ = 8</p>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤2：</strong>因式分解法</p>
+                        <p style="margin-left: 25px;">x³ - 8 = 0</p>
+                        <p style="margin-left: 25px;">(x - 2)(x² + 2x + 4) = 0</p>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤3：</strong>由因式分解可得</p>
+                        <p style="margin-left: 25px;">x - 2 = 0   或   x² + 2x + 4 = 0</p>
+                        <p style="margin-left: 25px;">x = 2      或   解判别式 Δ = 4 - 16 = -12 < 0</p>
+                        <p style="margin-left: 25px;">所以 x² + 2x + 4 = 0 在实数范围内无解</p>
+                        
+                        <div class="box blue-box" style="margin-top: 15px;">
+                            <p style="color: #e74c3c;"><strong>∴ 方程 x³ - 8 = 0 的解为 x = 2</strong></p>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <div class="box blue-box" style="margin-left: 15px;">
+                            <h3 style="text-align: center; color: #2980b9;">开方法解此题</h3>
+                            <p>x³ = 8</p>
+                            <p>x = ∛8 = 2</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">第4页</div>
+        </div>
+
+        <!-- 第5页：整式方程例题2 -->
+        <div class="slide" id="slide5">
+            <div class="slide-header">
+                <h1>整式方程例题（提高）</h1>
+            </div>
+            <div class="slide-content">
+                <h2 style="color: #2980b9; margin-bottom: 18px;">例题：解方程 x⁴ - 5x² + 4 = 0</h2>
+                
+                <div style="display: flex;">
+                    <div style="flex: 3;">
+                        <h3><strong>解：</strong></h3>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤1：</strong>观察方程中 x 的次数都是偶数，可以使用换元法</p>
+                        <p style="margin-left: 25px;">令 y = x²，则原方程变为：</p>
+                        <p style="margin-left: 25px;">y² - 5y + 4 = 0</p>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤2：</strong>解一元二次方程</p>
+                        <p style="margin-left: 25px;">因式分解：(y - 4)(y - 1) = 0</p>
+                        <p style="margin-left: 25px;">得：y = 4 或 y = 1</p>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤3：</strong>代回原变量 x</p>
+                        <p style="margin-left: 25px;">当 y = 4 时，x² = 4，所以 x = ±2</p>
+                        <p style="margin-left: 25px;">当 y = 1 时，x² = 1，所以 x = ±1</p>
+                        
+                        <div class="box blue-box" style="margin-top: 15px;">
+                            <p style="color: #e74c3c;"><strong>∴ 方程 x⁴ - 5x² + 4 = 0 的解为 x = -2, -1, 1, 2</strong></p>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <div class="box blue-box" style="margin-left: 15px;">
+                            <h3 style="text-align: center; color: #2980b9; margin-bottom: 8px;">方程的解在数轴上的位置</h3>
+                            
+                            <div class="coordinate-system" style="margin: 0 auto;">
+                                <div class="x-axis"></div>
+                                <div class="y-axis"></div>
+                                <div class="point" style="left: 60px; top: 100px;"></div>
+                                <div class="point" style="left: 80px; top: 100px;"></div>
+                                <div class="point" style="left: 120px; top: 100px;"></div>
+                                <div class="point" style="left: 140px; top: 100px;"></div>
+                                
+                                <div style="position: absolute; left: 60px; top: 115px; font-size: 14px; color: #e74c3c; transform: translateX(-50%);">-2</div>
+                                <div style="position: absolute; left: 80px; top: 115px; font-size: 14px; color: #e74c3c; transform: translateX(-50%);">-1</div>
+                                <div style="position: absolute; left: 120px; top: 115px; font-size: 14px; color: #e74c3c; transform: translateX(-50%);">1</div>
+                                <div style="position: absolute; left: 140px; top: 115px; font-size: 14px; color: #e74c3c; transform: translateX(-50%);">2</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">第5页</div>
+        </div>
+
+        <!-- 第6页：分式方程知识点 -->
+        <div class="slide" id="slide6">
+            <div class="slide-header">
+                <h1>二、分式方程</h1>
+            </div>
+            <div class="slide-content">
+                <h2 style="color: #2980b9; margin-bottom: 18px;">知识点</h2>
+                
+                <div class="box blue-box">
+                    <h3><strong>定义：</strong></h3>
+                    <p>分式方程：含有未知数分母的代数方程，如 a/x + b/(x-c) = d。</p>
+                </div>
+                
+                <div class="box blue-box">
+                    <h3><strong>注意事项：</strong></h3>
+                    <p>1. 分母为零时，分式无意义，所以要排除未知数取值使分母为零的情况。</p>
+                    <p class="important">2. 解分式方程必须验根，因为去分母可能产生增根！</p>
+                </div>
+                
+                <div class="box blue-box">
+                    <h3><strong>解法步骤：</strong></h3>
+                    <p>步骤1：找出所有分母，记录分母不能为零的条件</p>
+                    <p>步骤2：通分或两边同乘最简公分母，消去所有分母</p>
+                    <p>步骤3：解所得的整式方程</p>
+                    <p>步骤4：验根（检验所得解是否满足分母不为零的条件，且代入原方程）</p>
+                    <p>步骤5：得出最终解（去除不满足条件的解）</p>
+                </div>
+                
+                <div class="box red-box" style="width: 300px; margin: 0 auto; text-align: center;">
+                    <h3 style="color: #e74c3c;">分母不为零很重要！</h3>
+                    <p style="color: #e74c3c;">必须验根！</p>
+                    <p style="color: #e74c3c;">可能会产生增根！</p>
+                </div>
+            </div>
+            <div class="slide-footer">第6页</div>
+        </div>
+
+        <!-- 第7页：分式方程例题 -->
+        <div class="slide" id="slide7">
+            <div class="slide-header">
+                <h1>分式方程例题</h1>
+            </div>
+            <div class="slide-content">
+                <h2 style="color: #2980b9; margin-bottom: 18px;">例题：解方程 3/(x-2) = 2/x</h2>
+                
+                <div style="display: flex;">
+                    <div style="flex: 1;">
+                        <h3><strong>解：</strong></h3>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤1：</strong>记录分母不为零的条件</p>
+                        <div class="box blue-box">
+                            <p>x - 2 ≠ 0 且 x ≠ 0，即 x ≠ 2 且 x ≠ 0</p>
+                        </div>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤2：</strong>两边同乘公分母 x(x-2)</p>
+                        <p style="margin-left: 20px;">3/(x-2) = 2/x</p>
+                        <p style="margin-left: 20px;">3/(x-2) · x(x-2) = 2/x · x(x-2)</p>
+                        <p style="margin-left: 20px;">3x = 2(x-2)</p>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤3：</strong>解整式方程</p>
+                        <p style="margin-left: 20px;">3x = 2x - 4</p>
+                        <p style="margin-left: 20px;">x = -4</p>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤4：</strong>验根</p>
+                        <div class="box blue-box">
+                            <p>当 x = -4 时，x ≠ 0 且 x ≠ 2，满足分母不为零的条件</p>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <div class="box red-box" style="margin-left: 15px; margin-top: 20px;">
+                            <h3 style="text-align: center; color: #e74c3c; margin-bottom: 8px;">验证解是否正确</h3>
+                            
+                            <p>将 x = -4 代入原方程左边：</p>
+                            <p style="margin-left: 15px;">3/((-4)-2) = 3/(-6) = -1/2</p>
+                            
+                            <p style="margin-top: 10px;">将 x = -4 代入原方程右边：</p>
+                            <p style="margin-left: 15px;">2/(-4) = -1/2</p>
+                            
+                            <p style="margin-top: 10px; color: #e74c3c;"><strong>∴ x = -4 为方程的解</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">第7页</div>
+        </div>
+
+        <!-- 第8页：无理方程知识点 -->
+        <div class="slide" id="slide8">
+            <div class="slide-header">
+                <h1>三、无理方程</h1>
+            </div>
+            <div class="slide-content">
+                <h2 style="color: #2980b9; margin-bottom: 18px;">知识点</h2>
+                
+                <div class="box blue-box">
+                    <h3><strong>定义：</strong></h3>
+                    <p>无理方程：含有未知数开方的代数方程，如 √(ax+b) = cx+d。</p>
+                </div>
+                
+                <div class="box blue-box">
+                    <h3><strong>注意事项：</strong></h3>
+                    <p>1. 含有根式的式子，其中被开方的表达式必须大于等于零，这是根式有意义的条件。</p>
+                    <p>2. 平方过程可能引入增根，必须验证解是否满足根式存在条件。</p>
+                    <p class="important">3. 解无理方程必须验根！</p>
+                </div>
+                
+                <div class="box blue-box">
+                    <h3><strong>解法步骤：</strong></h3>
+                    <p>步骤1：将含根式的项移到一边，其他项移到另一边</p>
+                    <p>步骤2：两边平方，消去根号</p>
+                    <p>步骤3：整理得到的方程，可能需要重复步骤1-2（如果还有根号）</p>
+                    <p>步骤4：解整式方程</p>
+                    <p>步骤5：验根（检验：① 根式是否有意义；② 代入原方程是否成立）</p>
+                </div>
+                
+                <div class="box red-box" style="width: 300px; margin: 0 auto; text-align: center;">
+                    <h3 style="color: #e74c3c;">平方可能导致增根！</h3>
+                    <p style="color: #e74c3c;">必须验根！</p>
+                    <p style="color: #e74c3c;">检查根式有意义且方程成立</p>
+                </div>
+            </div>
+            <div class="slide-footer">第8页</div>
+        </div>
+
+        <!-- 第9页：无理方程例题 -->
+        <div class="slide" id="slide9">
+            <div class="slide-header">
+                <h1>无理方程例题</h1>
+            </div>
+            <div class="slide-content">
+                <h2 style="color: #2980b9; margin-bottom: 18px;">例题：解方程 √(2x+3) = x</h2>
+                
+                <div style="display: flex;">
+                    <div style="flex: 1;">
+                        <h3><strong>解：</strong></h3>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤1：</strong>记录根式的存在条件</p>
+                        <div class="box blue-box">
+                            <p>2x + 3 ≥ 0，即 x ≥ -3/2</p>
+                        </div>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤2：</strong>两边平方，消去根号</p>
+                        <p style="margin-left: 20px;">√(2x+3) = x</p>
+                        <p style="margin-left: 20px;">[√(2x+3)]² = x²</p>
+                        <p style="margin-left: 20px;">2x + 3 = x²</p>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤3：</strong>整理为标准形式</p>
+                        <p style="margin-left: 20px;">x² - 2x - 3 = 0</p>
+                        <p style="margin-left: 20px;">(x - 3)(x + 1) = 0</p>
+                        <p style="margin-left: 20px;">x = 3 或 x = -1</p>
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <div class="box red-box" style="margin-left: 15px;">
+                            <h3 style="text-align: center; color: #e74c3c; margin-bottom: 8px;">验证解是否正确</h3>
+                            
+                            <p><strong>验证 x = 3:</strong></p>
+                            <p style="margin-left: 15px;">1. 检查根式是否有意义：</p>
+                            <p style="margin-left: 30px;">2x + 3 = 2(3) + 3 = 9 > 0 ✓</p>
+                            <p style="margin-left: 15px;">2. 将 x = 3 代入原方程：</p>
+                            <p style="margin-left: 30px;">左边：√(2·3+3) = √9 = 3</p>
+                            <p style="margin-left: 30px;">右边：x = 3</p>
+                            <p style="margin-left: 15px;">左右相等，x = 3 是方程的解 ✓</p>
+                            
+                            <p style="margin-top: 10px;"><strong>验证 x = -1:</strong></p>
+                            <p style="margin-left: 15px;">1. 检查根式是否有意义：</p>
+                            <p style="margin-left: 30px;">2x + 3 = 2(-1) + 3 = 1 > 0 ✓</p>
+                            <p style="margin-left: 15px;">2. 将 x = -1 代入原方程：</p>
+                            <p style="margin-left: 30px;">左边：√(2·(-1)+3) = √1 = 1</p>
+                            <p style="margin-left: 30px;">右边：x = -1</p>
+                            <p style="margin-left: 15px; color: #e74c3c;">1 ≠ -1，x = -1 不是方程的解 ✗</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="box blue-box" style="margin-top: 15px;">
+                    <p style="color: #e74c3c; text-align: center;"><strong>∴ 方程 √(2x+3) = x 的解为 x = 3</strong></p>
+                </div>
+            </div>
+            <div class="slide-footer">第9页</div>
+        </div>
+
+        <!-- 第10页：二元二次方程组知识点 -->
+        <div class="slide" id="slide10">
+            <div class="slide-header">
+                <h1>四、二元二次方程组</h1>
+            </div>
+            <div class="slide-content">
+                <h2 style="color: #2980b9; margin-bottom: 18px;">知识点</h2>
+                
+                <div class="flex-row">
+                    <div class="flex-column">
+                        <div class="box blue-box">
+                            <h3><strong>定义：</strong></h3>
+                            <p>二元二次方程组：含有两个未知数，且至少有一个方程中未知数的最高次数为2的方程组。</p>
+                            <p>如：{x + y = 5; x² + y² = 13}，{xy = 6; x - y = 1}</p>
+                        </div>
+                        
+                        <div class="box blue-box">
+                            <h3><strong>常见形式：</strong></h3>
+                            <p>1. 一次和二次：{x + y = m; x² + y² = n} 或 {x - y = m; x² - y² = n}</p>
+                            <p>2. 乘积和和差：{xy = p; x + y = q} 或 {xy = p; x - y = q}</p>
+                            <p>3. 其他形式：包含分式、无理式或更复杂的组合</p>
+                        </div>
+                        
+                        <div class="box blue-box">
+                            <h3><strong>主要解法：</strong></h3>
+                            <p>1. <span class="important">代入消元法</span>：从一个方程解出一个未知数，代入另一个方程</p>
+                            <p>2. <span class="important">加减消元法</span>：通过方程组合消去一个未知数</p>
+                            <p>3. <span class="important">公式法</span>：利用特殊关系如 (x+y)² = x² + 2xy + y²，(x-y)² = x² - 2xy + y²</p>
+                            <p>4. <span class="important">换元法</span>：引入新变量简化原方程组</p>
+                            <p>5. 解方程组时注意检验所得的解是否满足原方程组</p>
+                        </div>
+                    </div>
+                    
+                    <div style="width: 350px;">
+                        <div class="box blue-box" style="height: 350px; position: relative;">
+                            <h3 style="text-align: center; color: #2980b9; margin-bottom: 15px;">图示</h3>
+                            
+                            <div class="coordinate-system" style="width: 250px; height: 250px; margin: 0 auto;">
+                                <div class="x-axis"></div>
+                                <div class="y-axis"></div>
+                                
+                                <!-- Line representing x + y = 5 -->
+                                <div style="position: absolute; width: 250px; height: 2px; background-color: #e74c3c; transform: rotate(-45deg); top: 125px; left: 0;"></div>
+                                <div style="position: absolute; left: 50px; top: 50px; font-size: 14px; color: #e74c3c;">x + y = 5</div>
+                                
+                                <!-- Circle representing x² + y² = 13 -->
+                                <div style="position: absolute; width: 180px; height: 180px; border: 2px solid #3498db; border-radius: 50%; top: 35px; left: 35px;"></div>
+                                <div style="position: absolute; left: 190px; top: 50px; font-size: 14px; color: #3498db;">x² + y² = 13</div>
+                                
+                                <!-- Intersection points -->
+                                <div style="position: absolute; width: 10px; height: 10px; background-color: #2ecc71; border-radius: 50%; top: 167px; left: 84px;"></div>
+                                <div style="position: absolute; left: 80px; top: 185px; font-size: 14px; color: #2ecc71;">(2,3)</div>
+                                
+                                <div style="position: absolute; width: 10px; height: 10px; background-color: #2ecc71; border-radius: 50%; top: 84px; left: 167px;"></div>
+                                <div style="position: absolute; left: 180px; top: 70px; font-size: 14px; color: #2ecc71;">(3,2)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">第10页</div>
+        </div>
+
+        <!-- 第11页：二元二次方程组例题 -->
+        <div class="slide" id="slide11">
+            <div class="slide-header">
+                <h1>二元二次方程组例题</h1>
+            </div>
+            <div class="slide-content">
+                <h2 style="color: #2980b9; margin-bottom: 18px;">例题：解方程组 {<br>x + y = 5 <br>x² + y² = 13<br>}</h2>
+                
+                <div style="display: flex;">
+                    <div style="flex: 1;">
+                        <h3><strong>解：（代入消元法）</strong></h3>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤1：</strong>从第一个方程解出一个未知数</p>
+                        <p style="margin-left: 20px;">由 x + y = 5 得：y = 5 - x</p>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤2：</strong>将 y = 5 - x 代入第二个方程</p>
+                        <p style="margin-left: 20px;">x² + y² = 13</p>
+                        <p style="margin-left: 20px;">x² + (5 - x)² = 13</p>
+                        <p style="margin-left: 20px;">x² + (25 - 10x + x²) = 13</p>
+                        <p style="margin-left: 20px;">2x² - 10x + 25 = 13</p>
+                        <p style="margin-left: 20px;">2x² - 10x + 12 = 0</p>
+                        <p style="margin-left: 20px;">x² - 5x + 6 = 0</p>
+                        <p style="margin-left: 20px;">(x - 2)(x - 3) = 0</p>
+                        <p style="margin-left: 20px;">x = 2 或 x = 3</p>
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <div class="box blue-box" style="margin-left: 15px;">
+                            <h3 style="text-align: center; color: #2980b9; margin-bottom: 8px;">求解 y 值并得到方程组解</h3>
+                            
+                            <p><strong>当 x = 2 时：</strong></p>
+                            <p style="margin-left: 20px;">y = 5 - x = 5 - 2 = 3</p>
+                            <p style="margin-left: 20px;">验证：2² + 3² = 4 + 9 = 13 ✓</p>
+                            <p>所以 (2, 3) 是方程组的一个解</p>
+                            
+                            <p style="margin-top: 12px;"><strong>当 x = 3 时：</strong></p>
+                            <p style="margin-left: 20px;">y = 5 - x = 5 - 3 = 2</p>
+                            <p style="margin-left: 20px;">验证：3² + 2² = 9 + 4 = 13 ✓</p>
+                            <p>所以 (3, 2) 是方程组的另一个解</p>
+                            
+                            <div class="box red-box" style="margin-top: 12px;">
+                                <p style="text-align: center; color: #e74c3c;"><strong>∴ 方程组的解为：(2, 3) 和 (3, 2)</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p style="margin-top: 15px;"><strong>提示：也可以用公式法求解</strong></p>
+                <p style="margin-left: 25px;">由 (x+y)² = x² + 2xy + y²，可得 2xy = (x+y)² - (x² + y²) = 5² - 13 = 12</p>
+            </div>
+            <div class="slide-footer">第11页</div>
+        </div>
+
+        <!-- 第12页：应用题概述 -->
+        <div class="slide" id="slide12">
+            <div class="slide-header">
+                <h1>五、列方程（组）解应用题</h1>
+            </div>
+            <div class="slide-content">
+                <h2 style="color: #2980b9; margin-bottom: 18px;">应用题解题步骤</h2>
+                
+                <div class="flex-row">
+                    <div class="flex-column">
+                        <div class="box blue-box">
+                            <h3 style="color: #e74c3c;"><strong>1. 审题</strong></h3>
+                            <p>理解题意，明确已知条件和所求量，分析数量关系</p>
+                            
+                            <h3 style="color: #e74c3c; margin-top: 12px;"><strong>2. 设未知数</strong></h3>
+                            <p>选择合适的未知数，通常选择所求的量或容易表示的量</p>
+                            
+                            <h3 style="color: #e74c3c; margin-top: 12px;"><strong>3. 列方程（组）</strong></h3>
+                            <p>根据题目条件，用代数式表示各个量，建立等量关系</p>
+                            
+                            <h3 style="color: #e74c3c; margin-top: 12px;"><strong>4. 解方程（组）</strong></h3>
+                            <p>使用适当的方法求解方程或方程组</p>
+                            
+                            <h3 style="color: #e74c3c; margin-top: 12px;"><strong>5. 检验与答题</strong></h3>
+                            <p>验证解是否合理，回答题目所求问题</p>
+                        </div>
+                        
+                        <div class="box red-box" style="margin-top: 15px;">
+                            <h3><strong>注意事项：</strong></h3>
+                            <p>1. 单位要统一   2. 设未知数时要明确并记录含义   3. 检验解的实际意义</p>
+                        </div>
+                    </div>
+                    
+                    <div style="width: 320px;">
+                        <div class="box blue-box">
+                            <h3 style="text-align: center; color: #2980b9; margin-bottom: 15px;">常见应用题类型</h3>
+                            
+                            <div style="margin-left: 20px;">
+                                <div class="box blue-box" style="padding: 8px; margin-bottom: 8px;">
+                                    <p style="text-align: center;">工程问题（工作效率）</p>
+                                </div>
+                                
+                                <div class="box blue-box" style="padding: 8px; margin-bottom: 8px;">
+                                    <p style="text-align: center;">行程问题（速度、时间）</p>
+                                </div>
+                                
+                                <div class="box blue-box" style="padding: 8px; margin-bottom: 8px;">
+                                    <p style="text-align: center;">配比问题（浓度、比例）</p>
+                                </div>
+                                
+                                <div class="box blue-box" style="padding: 8px; margin-bottom: 8px;">
+                                    <p style="text-align: center;">数字关系（和差积商）</p>
+                                </div>
+                                
+                                <div class="box blue-box" style="padding: 8px; margin-bottom: 8px;">
+                                    <p style="text-align: center;">几何问题（面积、周长）</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">第12页</div>
+        </div>
+
+        <!-- 第13页：应用题例题1 -->
+        <div class="slide" id="slide13">
+            <div class="slide-header">
+                <h1>应用题例题（工程问题）</h1>
+            </div>
+            <div class="slide-content">
+                <h2 style="color: #2980b9; margin-bottom: 18px;">例题：甲、乙合作完成一项工作需6天，甲单独做比乙少5天，求两人单独完成各需几天。</h2>
+                
+                <div style="display: flex;">
+                    <div style="flex: 2;">
+                        <h3><strong>解：</strong></h3>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤1：</strong>设甲单独完成工作需要 x 天，则乙需要 x+5 天</p>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤2：</strong>根据工作效率关系列方程</p>
+                        <p style="margin-left: 20px;">甲的工作效率为：1/x</p>
+                        <p style="margin-left: 20px;">乙的工作效率为：1/(x+5)</p>
+                        <p style="margin-left: 20px;">合作时的效率等于各自效率之和：</p>
+                        <p style="margin-left: 20px;">1/6 = 1/x + 1/(x+5)</p>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤3：</strong>解方程</p>
+                        <p style="margin-left: 20px;">两边同乘 6x(x+5)，得：</p>
+                        <p style="margin-left: 20px;">x(x+5) = 6(x+5) + 6x</p>
+                        <p style="margin-left: 20px;">x² + 5x = 6x + 30 + 6x</p>
+                        <p style="margin-left: 20px;">x² + 5x - 12x - 30 = 0</p>
+                        <p style="margin-left: 20px;">x² - 7x - 30 = 0</p>
+                        <p style="margin-left: 20px;">(x-10)(x+3) = 0</p>
+                        <p style="margin-left: 20px;">x = 10 或 x = -3</p>
+                        <p style="margin-left: 20px;">因为时间不能为负，舍去 x = -3，所以 x = 10</p>
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <div style="text-align: center; margin-top: 20px;">
+                            <div style="background-color: #fff; border: 2px solid #3498db; border-radius: 10px; padding: 15px; display: inline-block;">
+                                <!-- Worker Figures -->
+                                <div style="margin-bottom: 15px;">
+                                    <!-- Worker A -->
+                                    <div style="display: inline-block;">
+                                        <div style="width: 30px; height: 30px; background-color: #3498db; border-radius: 50%; margin: 0 auto;"></div>
+                                        <div style="width: 8px; height: 25px; background-color: #3498db; margin: 0 auto;"></div>
+                                        <div style="display: flex; margin-top: -12px;">
+                                            <div style="width: 8px; height: 15px; background-color: #3498db; margin-left: 8px;"></div>
+                                            <div style="width: 8px; height: 15px; background-color: #3498db; margin-left: 6px;"></div>
+                                        </div>
+                                        <div style="text-align: center; margin-top: 5px; font-size: 0.9em;">甲</div>
+                                    </div>
+                                    
+                                    <!-- Plus Sign -->
+                                    <div style="display: inline-block; margin: 0 15px; font-size: 24px; font-weight: bold;">+</div>
+                                    
+                                    <!-- Worker B -->
+                                    <div style="display: inline-block;">
+                                        <div style="width: 30px; height: 30px; background-color: #e74c3c; border-radius: 50%; margin: 0 auto;"></div>
+                                        <div style="width: 8px; height: 25px; background-color: #e74c3c; margin: 0 auto;"></div>
+                                        <div style="display: flex; margin-top: -12px;">
+                                            <div style="width: 8px; height: 15px; background-color: #e74c3c; margin-left: 8px;"></div>
+                                            <div style="width: 8px; height: 15px; background-color: #e74c3c; margin-left: 6px;"></div>
+                                        </div>
+                                        <div style="text-align: center; margin-top: 5px; font-size: 0.9em;">乙</div>
+                                    </div>
+                                </div>
+                                
+                                <p style="font-size: 0.9em;">6天完成工作</p>
+                            </div>
+                        </div>
+                        
+                        <div class="box red-box" style="margin-top: 20px; text-align: center;">
+                            <h3 style="color: #e74c3c;"><strong>答：甲单独需要10天</strong></h3>
+                            <h3 style="color: #e74c3c; margin-top: 10px;"><strong>乙单独需要15天</strong></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">第13页</div>
+        </div>
+
+        <!-- 第14页：应用题例题2 -->
+        <div class="slide" id="slide14">
+            <div class="slide-header">
+                <h1>应用题例题（行程问题）</h1>
+            </div>
+            <div class="slide-content">
+                <h2 style="color: #2980b9; margin-bottom: 18px;">例题：小明与小红相距90千米，两人同时相向而行。小明速度为4.5千米/时，小红速度为5.5千米/时，求他们多久后相遇？</h2>
+                
+                <div style="display: flex;">
+                    <div style="flex: 2;">
+                        <h3><strong>解：</strong></h3>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤1：</strong>设两人相遇所需时间为t小时</p>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤2：</strong>根据路程 = 速度 × 时间，列出方程</p>
+                        <p style="margin-left: 20px;">小明走过的路程：4.5t</p>
+                        <p style="margin-left: 20px;">小红走过的路程：5.5t</p>
+                        <p style="margin-left: 20px;">根据相遇时两人走过的总路程等于总距离：</p>
+                        <p style="margin-left: 20px;">4.5t + 5.5t = 90</p>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤3：</strong>解方程</p>
+                        <p style="margin-left: 20px;">10t = 90</p>
+                        <p style="margin-left: 20px;">t = 9</p>
+                        
+                        <div class="box blue-box" style="margin-top: 20px; text-align: center;">
+                            <h3 style="color: #e74c3c;"><strong>答：两人9小时后相遇</strong></h3>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <div style="background-color: #fff; border: 2px solid #3498db; border-radius: 10px; padding: 15px; margin-top: 20px;">
+                            <div style="position: relative; height: 150px; margin: 10px 0;">
+                                <!-- Person A -->
+                                <div style="position: absolute; left: 25px; top: 70px;">
+                                    <div style="width: 26px; height: 26px; background-color: #3498db; border-radius: 50%;"></div>
+                                    <p style="text-align: center; margin-top: 3px; font-size: 0.8em;">小明</p>
+                                </div>
+                                
+                                <!-- Arrow from A -->
+                                <div style="position: absolute; left: 60px; top: 83px; width: 50px; height: 2px; background-color: #2c3e50;"></div>
+                                <div style="position: absolute; left: 110px; top: 83px; width: 0; height: 0; border-top: 4px solid transparent; border-left: 8px solid #2c3e50; border-bottom: 4px solid transparent;"></div>
+                                <p style="position: absolute; left: 80px; top: 62px; font-size: 0.8em;">4.5km/h</p>
+                                
+                                <!-- Person B -->
+                                <div style="position: absolute; right: 25px; top: 70px;">
+                                    <div style="width: 26px; height: 26px; background-color: #e74c3c; border-radius: 50%;"></div>
+                                    <p style="text-align: center; margin-top: 3px; font-size: 0.8em;">小红</p>
+                                </div>
+                                
+                                <!-- Arrow from B -->
+                                <div style="position: absolute; right: 60px; top: 83px; width: 50px; height: 2px; background-color: #2c3e50;"></div>
+                                <div style="position: absolute; right: 110px; top: 83px; width: 0; height: 0; border-top: 4px solid transparent; border-right: 8px solid #2c3e50; border-bottom: 4px solid transparent;"></div>
+                                <p style="position: absolute; right: 80px; top: 62px; font-size: 0.8em;">5.5km/h</p>
+                                
+                                <!-- Distance indicator -->
+                                <div style="position: absolute; left: 40px; top: 110px; width: 160px; height: 2px; background-color: #2c3e50;"></div>
+                                <div style="position: absolute; left: 40px; top: 110px; width: 0; height: 0; border-top: 4px solid transparent; border-right: 8px solid #2c3e50; border-bottom: 4px solid transparent;"></div>
+                                <div style="position: absolute; right: 40px; top: 110px; width: 0; height: 0; border-top: 4px solid transparent; border-left: 8px solid #2c3e50; border-bottom: 4px solid transparent;"></div>
+                                <p style="position: absolute; left: 50%; top: 118px; transform: translateX(-50%); font-size: 0.8em;">90千米</p>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 15px; background-color: #f9ebea; border: 2px solid #e74c3c; border-radius: 10px; padding: 10px;">
+                            <p style="text-align: center; font-size: 0.9em;">解题要点：</p>
+                            <p style="margin-top: 6px; font-size: 0.9em;">相向而行时，速度相加；</p>
+                            <p style="font-size: 0.9em;">同向而行时，速度相减；</p>
+                            <p style="font-size: 0.9em;">路程 = 速度 × 时间</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">第14页</div>
+        </div>
+
+        <!-- 第15页：无理方程例题（提高） -->
+        <div class="slide" id="slide15">
+            <div class="slide-header">
+                <h1>无理方程例题（提高）</h1>
+            </div>
+            <div class="slide-content">
+                <h2 style="color: #2980b9; margin-bottom: 18px;">例题：解方程 √(x - 1) + √(x + 3) = 4</h2>
+                
+                <div style="display: flex;">
+                    <div style="flex: 1;">
+                        <h3><strong>解：</strong></h3>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤1：</strong>记录根式的存在条件</p>
+                        <div class="box blue-box">
+                            <p>要使得方程有意义，需要 x - 1 ≥ 0 且 x + 3 ≥ 0，即 x ≥ 1</p>
+                        </div>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤2：</strong>将一个根式移项，准备平方消去根号</p>
+                        <p style="margin-left: 20px;">√(x - 1) = 4 - √(x + 3)</p>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤3：</strong>两边平方</p>
+                        <p style="margin-left: 20px;">(√(x - 1))² = (4 - √(x + 3))²</p>
+                        <p style="margin-left: 20px;">x - 1 = 16 - 8√(x + 3) + (x + 3)</p>
+                        <p style="margin-left: 20px;">x - 1 = 16 - 8√(x + 3) + x + 3</p>
+                        <p style="margin-left: 20px;">-4 = -8√(x + 3)</p>
+                        <p style="margin-left: 20px;">√(x + 3) = 1/2</p>
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <div class="box red-box" style="margin-left: 15px;">
+                            <h3 style="text-align: center; color: #e74c3c; margin-bottom: 8px;">解的验证</h3>
+                            
+                            <p><strong>步骤4：</strong>求解并验证</p>
+                            <p style="margin-left: 15px;">(√(x + 3))² = (1/2)²</p>
+                            <p style="margin-left: 15px;">x + 3 = 1/4</p>
+                            <p style="margin-left: 15px;">x = 1/4 - 3 = -2.75</p>
+                            
+                            <p style="margin-top: 8px;"><strong>验证：</strong></p>
+                            <p style="margin-left: 15px;">当 x = -2.75 时，x < 1</p>
+                            <p style="margin-left: 15px; color: #e74c3c;">不满足根式存在条件！</p>
+                            
+                            <div style="background-color: #ffecec; border: 1px solid #e74c3c; border-radius: 5px; padding: 5px; margin-top: 8px; text-align: center;">
+                                <p style="color: #e74c3c;"><strong>方程无解</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="box blue-box" style="margin-top: 15px;">
+                    <p style="color: #e74c3c; text-align: center;"><strong>∴ 方程 √(x - 1) + √(x + 3) = 4 在实数范围内无解</strong></p>
+                </div>
+                
+                <div class="box yellow-box" style="margin-top: 15px;">
+                    <p><strong>提示：</strong>在解无理方程时，由于平方运算可能引入增根，验证解是否满足根式存在条件以及代入原方程验证是否成立非常重要。这个例题展示了我们可能得到的解不满足条件的情况。</p>
+                </div>
+            </div>
+            <div class="slide-footer">第15页</div>
+        </div>
+
+        <!-- 第16页：代数方程常见错误与提示 -->
+        <div class="slide" id="slide16">
+            <div class="slide-header">
+                <h1>代数方程常见错误与提示</h1>
+            </div>
+            <div class="slide-content">
+                <h2 style="font-size: 1.8em; color: #2980b9; text-align: center; margin-bottom: 20px;">易错点总结与解题技巧</h2>
+                
+                <div class="flex-row">
+                    <div class="flex-column">
+                        <div class="box red-box">
+                            <h3 style="text-align: center; color: #e74c3c; margin-bottom: 10px;"><strong>常见错误</strong></h3>
+                            
+                            <p><strong>1. 分式方程：</strong></p>
+                            <p style="margin-left: 15px;">忘记验根导致增根错误</p>
+                            <p style="margin-left: 15px;">例：3/(x-1) = 1，当x = 1时分母为0</p>
+                            
+                            <p style="margin-top: 10px;"><strong>2. 无理方程：</strong></p>
+                            <p style="margin-left: 15px;">平方后未检验根的有效性</p>
+                            <p style="margin-left: 15px;">例：√x = -2 无解，因为√x ≥ 0</p>
+                            
+                            <p style="margin-top: 10px;"><strong>3. 应用题：</strong></p>
+                            <p style="margin-left: 15px;">单位不统一或等量关系错误</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-column">
+                        <div class="box blue-box">
+                            <h3 style="text-align: center; color: #3498db; margin-bottom: 10px;"><strong>解题技巧</strong></h3>
+                            
+                            <p><strong>1. 审题细致：</strong></p>
+                            <p style="margin-left: 15px;">理解题意，明确所求</p>
+                            <p style="margin-left: 15px;">检查特殊条件限制</p>
+                            
+                            <p style="margin-top: 10px;"><strong>2. 解题步骤规范：</strong></p>
+                            <p style="margin-left: 15px;">设未知数→列方程→解方程→验证</p>
+                            <p style="margin-left: 15px;">分式、无理方程必须验根！</p>
+                            
+                            <p style="margin-top: 10px;"><strong>3. 检查与反思：</strong></p>
+                            <p style="margin-left: 15px;">检查解是否满足题目实际意义</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="box yellow-box" style="margin-top: 20px;">
+                    <p><strong style="color: #d35400; margin-right: 10px;">★ 重要提示：</strong>方程变形后的解不一定是原方程的解，必须验证！</p>
+                    <p style="margin-left: 100px;">尤其对分式方程和无理方程，这点非常重要</p>
+                </div>
+                
+                <div class="box green-box" style="margin-top: 15px;">
+                    <p style="text-align: center;"><strong>解题时保持冷静思考，按步骤规范操作，可以避免大多数常见错误！</strong></p>
+                </div>
+            </div>
+            <div class="slide-footer">第16页</div>
+        </div>
+
+        <!-- 第17页：应用题二元二次方程组 -->
+        <div class="slide" id="slide17">
+            <div class="slide-header">
+                <h1>应用题（二元二次方程组）</h1>
+            </div>
+            <div class="slide-content">
+                <h2 style="color: #2980b9; margin-bottom: 18px;">例题：一个长方形的周长是20厘米，面积是21平方厘米。求这个长方形的长和宽。</h2>
+                
+                <div style="display: flex;">
+                    <div style="flex: 2;">
+                        <h3><strong>解：</strong></h3>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤1：</strong>设长方形的长为x厘米，宽为y厘米，由题意可得方程组：</p>
+                        <div class="box blue-box">
+                            <p>{ 2(x + y) = 20</p>
+                            <p>{ xy = 21</p>
+                        </div>
+                        
+                        <p style="margin-top: 12px;"><strong>步骤2：</strong>简化第一个方程，并用代入法解方程组</p>
+                        <p style="margin-left: 20px;">由第一个方程得：x + y = 10，因此 y = 10 - x</p>
+                        <p style="margin-left: 20px;">将 y = 10 - x 代入第二个方程：</p>
+                        <p style="margin-left: 20px;">x(10 - x) = 21</p>
+                        <p style="margin-left: 20px;">10x - x² = 21</p>
+                        <p style="margin-left: 20px;">x² - 10x + 21 = 0</p>
+                        <p style="margin-left: 20px;">(x - 7)(x - 3) = 0</p>
+                        <p style="margin-left: 20px;">x = 7 或 x = 3</p>
+                        
+                        <div class="box red-box" style="margin-top: 15px;">
+                            <p><strong>当 x = 7 时，y = 10 - 7 = 3</strong></p>
+                            <p><strong>当 x = 3 时，y = 10 - 3 = 7</strong></p>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <div style="background-color: #ebf5fb; border: 2px solid #3498db; border-radius: 10px; padding: 15px; margin-top: 20px;">
+                            <!-- Rectangle Drawing -->
+                            <div style="position: relative; margin: 15px auto; width: 120px; height: 85px; border: 3px solid #2c3e50;"></div>
+                            
+                            <!-- Dimension Labels -->
+                            <div style="position: relative; margin: 15px auto; width: 180px;">
+                                <p style="position: absolute; left: 90px; top: -120px; text-align: center; font-size: 0.9em;">x</p>
+                                <div style="position: absolute; left: 30px; top: -140px; width: 120px; height: 1px; background-color: #2c3e50;"></div>
+                                <div style="position: absolute; left: 30px; top: -145px; width: 1px; height: 10px; background-color: #2c3e50;"></div>
+                                <div style="position: absolute; left: 150px; top: -145px; width: 1px; height: 10px; background-color: #2c3e50;"></div>
+                                
+                                <p style="position: absolute; left: 5px; top: -70px; text-align: center; font-size: 0.9em;">y</p>
+                                <div style="position: absolute; left: -10px; top: -110px; width: 1px; height: 85px; background-color: #2c3e50;"></div>
+                                <div style="position: absolute; left: -15px; top: -110px; width: 10px; height: 1px; background-color: #2c3e50;"></div>
+                                <div style="position: absolute; left: -15px; top: -25px; width: 10px; height: 1px; background-color: #2c3e50;"></div>
+                            </div>
+                            
+                            <!-- Information Labels -->
+                            <p style="text-align: center; margin-top: 50px; font-size: 0.9em;">周长 = 2(x+y) = 20</p>
+                            <p style="text-align: center; font-size: 0.9em;">面积 = xy = 21</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="box blue-box" style="margin-top: 15px; text-align: center;">
+                    <p style="color: #2980b9; font-size: 1.2em;"><strong>∴ 长方形的长宽为：7厘米和3厘米，或3厘米和7厘米</strong></p>
+                </div>
+            </div>
+            <div class="slide-footer">第17页</div>
+        </div>
+
+        <!-- 第18页：复习总结 -->
+        <div class="slide" id="slide18">
+            <div class="slide-header">
+                <h1>代数方程复习总结</h1>
+            </div>
+            <div class="slide-content">
+                <h2 style="color: #2980b9; text-align: center; margin-bottom: 20px;">核心知识点总结</h2>
+                
+                <div class="flex-row">
+                    <div class="flex-column" style="margin-right: 15px;">
+                        <!-- Polynomial Equations -->
+                        <div class="box blue-box" style="margin-bottom: 12px;">
+                            <h3 style="text-align: center; color: #3498db;"><strong>整式方程</strong></h3>
+                            <p>• 形式：只含有未知数的加、减、乘、幂运算</p>
+                            <p>• 解法：因式分解法、换元法、公式法</p>
+                        </div>
+                        
+                        <!-- Rational Equations -->
+                        <div class="box blue-box" style="margin-bottom: 12px;">
+                            <h3 style="text-align: center; color: #3498db;"><strong>分式方程</strong></h3>
+                            <p>• 形式：含有未知数分母的代数方程</p>
+                            <p class="important">• 解法：通分去分母，注意验根避免增根</p>
+                        </div>
+                        
+                        <!-- Application Problems -->
+                        <div class="box blue-box">
+                            <h3 style="text-align: center; color: #3498db;"><strong>应用题</strong></h3>
+                            <p>• 步骤：审题→设未知数→列方程→解方程→检验</p>
+                            <p>• 类型：行程、工程、数字、几何、浓度问题</p>
+                            <p>• 注意：单位统一、理解实际意义</p>
+                            <p>• 技巧：找到关键量，建立等量关系</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-column" style="margin-left: 15px;">
+                        <!-- Irrational Equations -->
+                        <div class="box blue-box" style="margin-bottom: 12px;">
+                            <h3 style="text-align: center; color: #3498db;"><strong>无理方程</strong></h3>
+                            <p>• 形式：含有未知数开方的代数方程</p>
+                            <p class="important">• 解法：平方去根号，必须验根避免增根</p>
+                        </div>
+                        
+                        <!-- Systems of Equations -->
+                        <div class="box blue-box" style="margin-bottom: 12px;">
+                            <h3 style="text-align: center; color: #3498db;"><strong>二元二次方程组</strong></h3>
+                            <p>• 形式：两个未知数，至少一个方程次数为2</p>
+                            <p>• 解法：代入法、加减法、公式法</p>
+                        </div>
+                        
+                        <!-- Important Reminder -->
+                        <div class="box yellow-box">
+                            <h3 style="text-align: center; color: #d35400;"><strong>解题关键</strong></h3>
+                            <p style="color: #d35400;">1. 整体思路：逐步化简，分析每步意义</p>
+                            <p style="color: #d35400;">2. 验证观念：方程变形可能引入增根</p>
+                            <p style="color: #d35400;">3. 实际应用：理解问题背景和数学关系</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="box green-box" style="margin-top: 20px;">
+                    <p style="text-align: center; color: #16a085; font-size: 1.2em;"><strong>灵活运用各类方程的解法，提高解题能力是关键！</strong></p>
+                </div>
+            </div>
+            <div class="slide-footer">第18页</div>
+        </div>
+    </div>
+    
+    <div class="nav-controls">
+        <button class="nav-btn" id="prevBtn" disabled>上一页</button>
+        <button class="nav-btn" id="nextBtn">下一页</button>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化幻灯片
+            const slides = document.querySelectorAll('.slide');
+            const totalSlides = slides.length;
+            let currentSlide = 0;
+            
+            // 更新总幻灯片数
+            document.getElementById('total-slides').textContent = totalSlides;
+            
+            // 更新导航按钮状态
+            function updateNavButtons() {
+                document.getElementById('prevBtn').disabled = currentSlide === 0;
+                document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+                document.getElementById('current-slide').textContent = currentSlide + 1;
+            }
+            
+            // 显示指定幻灯片
+            function showSlide(n) {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = n;
+                slides[currentSlide].classList.add('active');
+                updateNavButtons();
+            }
+            
+            // 设置导航按钮事件
+            document.getElementById('prevBtn').addEventListener('click', function() {
+                if (currentSlide > 0) {
+                    showSlide(currentSlide - 1);
+                }
+            });
+            
+            document.getElementById('nextBtn').addEventListener('click', function() {
+                if (currentSlide < totalSlides - 1) {
+                    showSlide(currentSlide + 1);
+                }
+            });
+            
+            // 键盘导航
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowLeft' && currentSlide > 0) {
+                    showSlide(currentSlide - 1);
+                } else if (e.key === 'ArrowRight' && currentSlide < totalSlides - 1) {
+                    showSlide(currentSlide + 1);
+                }
+            });
+            
+            // 使元素可拖动
+            const draggables = document.querySelectorAll('.draggable');
+            
+            draggables.forEach(draggable => {
+                let isDragging = false;
+                let offsetX, offsetY;
+                
+                draggable.addEventListener('mousedown', function(e) {
+                    isDragging = true;
+                    offsetX = e.clientX - draggable.getBoundingClientRect().left;
+                    offsetY = e.clientY - draggable.getBoundingClientRect().top;
+                    draggable.style.cursor = 'grabbing';
+                });
+                
+                document.addEventListener('mousemove', function(e) {
+                    if (isDragging) {
+                        const x = e.clientX - offsetX;
+                        const y = e.clientY - offsetY;
+                        
+                        draggable.style.left = x + 'px';
+                        draggable.style.top = y + 'px';
+                    }
+                });
+                
+                document.addEventListener('mouseup', function() {
+                    if (isDragging) {
+                        isDragging = false;
+                        draggable.style.cursor = 'grab';
+                    }
+                });
+            });
+            
+            // 处理触摸屏幕滑动
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            document.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+            }, false);
+            
+            document.addEventListener('touchend', function(e) {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, false);
+            
+            function handleSwipe() {
+                if (touchEndX < touchStartX - 50 && currentSlide < totalSlides - 1) {
+                    // 向左滑动，下一页
+                    showSlide(currentSlide + 1);
+                } else if (touchEndX > touchStartX + 50 && currentSlide > 0) {
+                    // 向右滑动，上一页
+                    showSlide(currentSlide - 1);
+                }
+            }
+            
+            // 窗口大小变化时调整
+            window.addEventListener('resize', function() {
+                adjustLayout();
+            });
+            
+            function adjustLayout() {
+                const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+                const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+                
+                // 根据视窗大小调整字体大小
+                if (vw < 768) {
+                    document.body.style.fontSize = '12px';
+                } else if (vw < 992) {
+                    document.body.style.fontSize = '14px';
+                } else if (vw < 1200) {
+                    document.body.style.fontSize = '15px';
+                } else {
+                    document.body.style.fontSize = '16px';
+                }
+                
+                // 调整容器高度以确保在小屏幕上内容可见
+                const headerHeight = document.querySelector('.slide-header').offsetHeight;
+                const controlsHeight = document.querySelector('.nav-controls').offsetHeight;
+                const indicatorHeight = document.querySelector('.slide-indicator').offsetHeight;
+                
+                const containerHeight = vh - headerHeight - controlsHeight - indicatorHeight - 40; // 40是额外边距
+                
+                document.querySelectorAll('.slide-content').forEach(content => {
+                    content.style.maxHeight = containerHeight + 'px';
+                });
+            }
+            
+            // 初始化
+            updateNavButtons();
+            adjustLayout();
+        });
+    </script>
+</body>
+</html>
